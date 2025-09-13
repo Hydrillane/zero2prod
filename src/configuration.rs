@@ -1,8 +1,12 @@
 use std::env;
 
-use config::{Config, ConfigError,File};
+
+use config::{ConfigError,File};
 use serde::Deserialize;
+use serde_aux::prelude::*;
 use secrecy::{ExposeSecret, SecretBox};
+use sqlx::{postgres::{PgConnectOptions,PgSslMode},ConnectOptions};
+use tracing_log::log::LevelFilter;
 
 #[derive(Deserialize)]
 pub struct Setting {
@@ -14,16 +18,19 @@ pub struct Setting {
 #[derive(Deserialize)]
 pub struct ApplicationSettings {
     pub host:String,
+    #[serde(deserialize_with = "deserialize_number_from_string")]
     pub port:u16,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize,Debug)]
 pub struct DatabaseSetting {
     pub username: String,
     pub password: SecretBox<String>,
+    #[serde(deserialize_with = "deserialize_number_from_string")]
     pub port: u16,
     pub host: String,
     pub database_name:String,
+    pub require_ssl:bool,
 }
 
 pub fn get_configuration() -> Result<Setting,ConfigError> {
@@ -45,6 +52,8 @@ pub fn get_configuration() -> Result<Setting,ConfigError> {
     settings.merge(
         File::from(configuration_dir.join(environment.as_str())).required(true)
     )?;
+
+    settings.merge(config::Environment::with_prefix("app").separator("__"))?;
 
     settings.try_into()
 }
@@ -80,22 +89,24 @@ impl TryFrom<String> for Environment {
 }
 
 impl DatabaseSetting {
-    pub fn connection_string(&self) -> SecretBox<String> {
-        SecretBox::new(Box::new(format!(
-                    "postgres://{}:{}@{}:{}/{}",
-                    self.username,
-                    self.password.expose_secret(),
-                    self.host,
-                    self.port,
-                    self.database_name
-        )))
+
+    pub fn connection_string(&self) -> PgConnectOptions {
+        let options = self.connection_without_dbname()
+            .database(&self.database_name).log_statements(tracing::log::LevelFilter::Trace);
+        options
     }
 
-    pub fn connection_without_dbname(&self) -> SecretBox<String> {
-        SecretBox::new(Box::new(format!("postgres://{}:{}@{}:{}",
-                    self.username,
-                    self.password.expose_secret(),
-                    self.host,
-                    self.port)))
+    pub fn connection_without_dbname(&self) -> PgConnectOptions {
+        let ssl_mode = if self.require_ssl {
+            PgSslMode::Require
+        } else {
+            PgSslMode::Prefer
+        };
+        PgConnectOptions::new()
+            .host(&self.host)
+            .username(&self.username)
+            .password(&self.password.expose_secret())
+            .port(self.port)
+            .ssl_mode(ssl_mode)
     }
 }
