@@ -1,5 +1,6 @@
 use std::{net::{IpAddr, Ipv4Addr, SocketAddr,TcpListener}};
 
+use native_tls::TlsAcceptor;
 use once_cell::sync::Lazy;
 use reqwest::Client;
 use sqlx::{query::Query, Connection, PgConnection, PgPool,Executor};
@@ -44,6 +45,7 @@ pub async fn spawn_app() -> TestApp {
     Lazy::force(&TRACING);
 
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind address"); 
+
     let port = listener.local_addr().unwrap().port();
 
     let mut config = configuration::get_configuration().expect("Failed to read configuration");
