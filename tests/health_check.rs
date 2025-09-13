@@ -75,11 +75,7 @@ pub async fn configure_database(config:&DatabaseSetting) -> PgPool {
             format!(r#"CREATE DATABASE "{}";"#,&config.database_name).as_str())
         .await;
 
-<<<<<<< HEAD
     let connection_pool = PgPool::connect_with(config.connection_string())
-=======
-    let connection_pool = PgPool::connect_with(&config.connection_string())
->>>>>>> f542100432f4bb25b1e8e55a9e9745f9f02548aa
     .await
     .expect("Failed to Connect");
     sqlx::migrate!("./migrations")

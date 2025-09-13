@@ -9,28 +9,26 @@ services:
     healthCheckPath: /health_check
     plan: free
     branch: main
-    envVarsGroups:
-      - name: database_and_app_env
-        envVars:  # ← This should be indented under the group, not a separate list item
-          - key: APP_ENVIRONMENT
-            value: production
-          - key: APP_DATABASE__USERNAME
-            fromDatabase:
-              name: newsletter-postgres
-              property: user
-          - key: APP_DATABASE__PASSWORD
-            fromDatabase:
-              name: newsletter-postgres
-              property: password
-          - key: APP_DATABASE__HOST
-            fromDatabase:
-              name: newsletter-postgres
-              property: host
-          - key: APP_DATABASE__PORT
-            fromDatabase:
-              name: newsletter-postgres
-              property: port
-          - key: APP_DATABASE__DATABASE_NAME
-            fromDatabase:
-              name: newsletter-postgres
-              property: database
+    envVars:  # ← This should be indented under the group, not a separate list item
+  - key: APP_ENVIRONMENT
+    value: production
+  - key: APP_DATABASE__USERNAME
+    fromDatabase:
+      name: newsletter-postgres
+      property: user
+  - key: APP_DATABASE__PASSWORD
+    fromDatabase:
+      name: newsletter-postgres
+      property: password
+  - key: APP_DATABASE__HOST
+    fromDatabase:
+      name: newsletter-postgres
+      property: host
+  - key: APP_DATABASE__PORT
+    fromDatabase:
+      name: newsletter-postgres
+      property: port
+  - key: APP_DATABASE__DATABASE_NAME
+    fromDatabase:
+      name: newsletter-postgres
+      property: database
