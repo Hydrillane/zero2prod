@@ -2,9 +2,7 @@
 FROM lukemathwalker/cargo-chef:latest-rust-1 AS chef
 
 WORKDIR /app
-RUN echo "nameserver 9.9.9.9" > /etc/resolv.conf && \
-    echo "nameserver 149.112.112.112" >> /etc/resolv.conf && \
-    apt update && \
+RUN apt update && \
     apt install -y lld clang pkg-config libssl-dev
 
 FROM chef AS planner
