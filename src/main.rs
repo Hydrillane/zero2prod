@@ -19,8 +19,7 @@ async fn main() -> std::io::Result<()> {
     let address = format!("{}:{}",configuration.application.host,configuration.application.port);
     let connection = PgPoolOptions::new()
         .idle_timeout(std::time::Duration::from_secs(2))
-        .connect_lazy(&configuration.database.connection_string().expose_secret())
-        .expect("faild to connect to DB!");
+        .connect_lazy_with(configuration.database.connection_string());
 
     let listener = TcpListener::bind(address)?;
     run(listener,connection)?.await
