@@ -12,26 +12,26 @@ services:
     branch: main
     envVarsGroups:
       - name: database_and_app_env
-        envVars:
-          - key: APP_ENVIRONMENT
+      - envVars:
+        - key: APP_ENVIRONMENT
           value: production
-          - key: APP_DATABASE__USERNAME
-            fromDatabase:
-              name: newsletter-postgres
-              property: user
-          - key: APP_DATABASE__PASSWORD
-            fromDatabase:
-              name: newsletter-postgres
-              property: password
-          - key: APP_DATABASE__HOST
-            fromDatabase:
-              name: newsletter-postgres
-              property: host
-          - key: APP_DATABASE__PORT
-            fromDatabase:
-              name: newsletter-postgres
-              property: port
-          - key: APP_DATABASE__DATABASE_NAME
-            fromDatabase:
-              name: newsletter-postgres
-              property: database
+        - key: APP_DATABASE__USERNAME
+          fromDatabase:
+            name: newsletter-postgres
+            property: user
+        - key: APP_DATABASE__PASSWORD
+          fromDatabase:
+            name: newsletter-postgres
+            property: password
+        - key: APP_DATABASE__HOST
+          fromDatabase:
+            name: newsletter-postgres
+            property: host
+        - key: APP_DATABASE__PORT
+          fromDatabase:
+            name: newsletter-postgres
+            property: port
+        - key: APP_DATABASE__DATABASE_NAME
+          fromDatabase:
+            name: newsletter-postgres
+            property: database
