@@ -1,7 +1,5 @@
 use std::net::TcpListener;
-use actix_web::cookie::time::Duration;
 use sqlx::postgres::PgPoolOptions;
-use secrecy::ExposeSecret;
 
 use zero2production::run;
 use zero2production::configuration;
@@ -19,12 +17,7 @@ async fn main() -> std::io::Result<()> {
     let address = format!("{}:{}",configuration.application.host,configuration.application.port);
     let connection = PgPoolOptions::new()
         .idle_timeout(std::time::Duration::from_secs(2))
-<<<<<<< HEAD
         .connect_lazy_with(configuration.database.connection_string());
-=======
-        .connect_lazy_with(&configuration.database.connection_string())
-        .expect("faild to connect to DB!");
->>>>>>> f542100432f4bb25b1e8e55a9e9745f9f02548aa
 
     let listener = TcpListener::bind(address)?;
     run(listener,connection)?.await
