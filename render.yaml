@@ -1,9 +1,15 @@
 
 services:
   - type: web
+    runtime: docker
     name: zero2prod
-    env: docker
-    docker: 
-      dockerfilePath: ./Dockerfile
-      envVars:
-        - key: APP_ENV
+    repo: https://github.com/Hydrillane/zero2prod
+    rootDir: app
+    dockerfilePath: ./Dockerfile
+    region: singapore
+    healthCheckPath: /health_check
+    plan: free
+    branch: main
+    envVars:
+      - key: APP_ENVIRONMENT
+        value: production
