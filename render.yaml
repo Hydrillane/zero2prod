@@ -1,0 +1,9 @@
+
+services:
+  - type: web
+    name: zero2prod
+    env: docker
+    docker: 
+      dockerfilePath: ./Dockerfile
+      envVars:
+        - key: APP_ENV

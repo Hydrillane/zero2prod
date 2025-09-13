@@ -1,0 +1,6 @@
+/target
+.env
+Dockerfile
+.dockerignore
+configuration/
+spec.yaml
