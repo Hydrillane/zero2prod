@@ -97,16 +97,10 @@ impl DatabaseSetting {
     }
 
     pub fn connection_without_dbname(&self) -> PgConnectOptions {
-        let ssl_mode = if self.require_ssl {
-            PgSslMode::Require
-        } else {
-            PgSslMode::Prefer
-        };
         PgConnectOptions::new()
             .host(&self.host)
             .username(&self.username)
             .password(&self.password.expose_secret())
             .port(self.port)
-            .ssl_mode(ssl_mode)
     }
 }
