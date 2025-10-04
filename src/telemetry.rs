@@ -3,8 +3,6 @@ use tracing_bunyan_formatter::{BunyanFormattingLayer, JsonStorage, JsonStorageLa
 use tracing_log::LogTracer;
 use tracing_subscriber::{layer::SubscriberExt, EnvFilter, Registry};
 
-
-
 pub fn get_subscriber(
     name:String,
     env_filter:String

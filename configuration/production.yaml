@@ -2,3 +2,7 @@ application:
   host: 0.0.0.0
 database:
   require_ssl: true
+email_client:
+  base_url: "https://api.postmarkapp.com"
+  sender_email: "b1032201027@student.untan.ac.id"
+  authorization_token: "my-secret-token"

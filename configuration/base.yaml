@@ -1,9 +1,15 @@
 
 application:
-  port: 8000
+  port: 8001
 database:
   host: "localhost"
   port: 5432
   username: "postgres"
   password: "password"
   database_name: "newsletter"
+
+email_client:
+  base_url: "https://api.postmarkapp.com"
+  sender_email: "b1032201027@student.untan.ac.id"
+  authorization_token: "my-secret-token"
+  timeout_milliseconds: 10000
