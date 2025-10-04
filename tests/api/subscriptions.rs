@@ -22,6 +22,24 @@ async fn subscribe_return_200_on_valid_form() {
 async fn subscribe_persists_the_new_subscriber() {
     let app = spawn_app().await;
     let body = "name=billy%20bongso&email=billybongso%40gmail.com";
+
+    Mock::given(path("email"))
+        .and(method("POST"))
+        .respond_with(ResponseTemplate::new(200))
+        .mount(&app.email_server)
+        .await;
+
+    app.post_subscriptions(body.into()).await;
+
+    let saved = sqlx::query!("SELECT email, name, status FROM subscriptions",)
+        .fetch_one(&app.db_pool)
+        .await
+        .expect("Failed to fetch saved subscriptions.");
+
+    assert_eq!(saved.email,"billybongso@gmail.com");
+    assert_eq!(saved.name,"billy bongso");
+    assert_eq!(saved.status,"pending_confirmations");
+
 }
 
 
