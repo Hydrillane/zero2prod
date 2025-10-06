@@ -6,7 +6,6 @@ use serde::Deserialize;
 use serde_aux::prelude::*;
 use secrecy::{ExposeSecret, SecretBox, SecretString};
 use sqlx::{postgres::{PgConnectOptions,PgSslMode},ConnectOptions};
-use std::sync::Arc;
 
 use crate::domain::SubscriberEmail;
 
@@ -38,9 +37,10 @@ impl EmailClientSettings {
 
 #[derive(Deserialize,Clone)]
 pub struct ApplicationSettings {
-    pub host:String,
     #[serde(deserialize_with = "deserialize_number_from_string")]
+    pub host:String,
     pub port:u16,
+    pub base_url: String,
 }
 
 #[derive(Deserialize,Debug,Clone)]
