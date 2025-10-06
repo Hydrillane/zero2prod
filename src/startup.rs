@@ -10,6 +10,8 @@ pub struct Application {
     pub port:u16,
 }
 
+pub struct ApplicationBaseUrl(pub String);
+
 impl Application {
 pub async fn build(configuration:Setting) -> Result<Application,std::io::Error> {
     let connection = PgPoolOptions::new()
@@ -34,7 +36,7 @@ pub async fn build(configuration:Setting) -> Result<Application,std::io::Error> 
 
     let listener = TcpListener::bind(address)?;
     let port = listener.local_addr().unwrap().port();
-    let server = run(listener,connection,email_client)?;
+    let server = run(listener,connection,email_client,configuration.application.base_url)?;
 
     Ok(
         Self {
@@ -57,7 +59,8 @@ pub async fn run_untill_stopped(self) -> Result<(),std::io::Error> {
 
 pub fn run(listener:TcpListener,
     connection: PgPool,
-    email_client:EmailClient)
+    email_client:EmailClient,
+    base_url: String)
     -> Result<Server,Error> {
     let data = web::Data::new(connection);
     let email_client = web::Data::new(email_client);
