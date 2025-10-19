@@ -1,4 +1,5 @@
 use crate::helpers::spawn_app;
+use actix_web::rt::spawn;
 use sqlx::query;
 use wiremock::{matchers::{method, path}, Mock, ResponseTemplate};
 
@@ -118,5 +119,23 @@ async fn subscribe_sends_a_confirmation_email_with_a_link() {
     let html_link = get_link(&body["HtmlBody"].as_str().unwrap());
     let text_link = get_link(&body["TextBody"].as_str().unwrap());
     assert_eq!(html_link,text_link);
+}
+
+
+#[tokio::test]
+async fn subscribe_fail_if_theres_database_error() {
+    let app = spawn_app().await;
+    let body = "name=le%20guin&email=ursula_le_guin%40gmail.com";
+
+    sqlx::query!(
+        "ALTER TABLE subscription_tokens DROP COLUMN subscription_token;",
+    )
+        .execute(&app.db_pool)
+        .await
+        .unwrap();
+
+    let response = app.post_subscriptions(body.into()).await;
+
+    assert_eq!(response.status().as_u16(),500);
 }
 

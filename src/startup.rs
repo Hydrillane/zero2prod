@@ -63,6 +63,7 @@ pub fn run(listener:TcpListener,
     base_url: String)
     -> Result<Server,Error> {
     let data = web::Data::new(connection);
+    let base_url = web::Data::new(ApplicationBaseUrl(base_url));
     let email_client = web::Data::new(email_client);
     let server = HttpServer::new(move || {
         App::new()
@@ -72,6 +73,7 @@ pub fn run(listener:TcpListener,
             .route("/subscriptions/confirm", web::get().to(confirm))
             .app_data(data.clone())
             .app_data(email_client.clone())
+            .app_data(base_url.clone())
     })
     .listen(listener)?
         .run();

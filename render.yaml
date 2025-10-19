@@ -11,6 +11,8 @@ services:
     envVars:
       - key: APP_ENVIRONMENT
         value: production
+      - key: APP_APPLICATION__BASE_URL
+        value: ${APP_URL}
       - key: APP_DATABASE__USERNAME
         fromDatabase:
           name: newsletter-postgres

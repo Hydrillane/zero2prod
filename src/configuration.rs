@@ -4,7 +4,7 @@ use std::{env, time::Duration};
 use config::{ConfigError,File};
 use serde::Deserialize;
 use serde_aux::prelude::*;
-use secrecy::{ExposeSecret, SecretBox, SecretString};
+use secrecy::{ExposeSecret, SecretString};
 use sqlx::{postgres::{PgConnectOptions,PgSslMode},ConnectOptions};
 
 use crate::domain::SubscriberEmail;
