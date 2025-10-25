@@ -1,9 +1,11 @@
+use core::fmt;
+
 use validator::ValidateEmail;
 
 
 
-#[derive(Debug)]
-pub struct SubscriberEmail(String);
+#[derive(Debug,Clone)]
+pub struct SubscriberEmail(pub String);
 
 impl SubscriberEmail {
     pub fn parse(s:String) -> Result<SubscriberEmail,String> {
@@ -16,6 +18,13 @@ impl SubscriberEmail {
     }
 
 }
+
+impl fmt::Display for SubscriberEmail {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f,"{}",&self.0)
+    }
+}
+
 
 impl ValidateEmail for SubscriberEmail {
     fn as_email_string(&self) -> Option<std::borrow::Cow<str>> {

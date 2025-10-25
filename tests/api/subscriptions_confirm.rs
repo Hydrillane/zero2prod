@@ -2,7 +2,6 @@
 
 use crate::helpers::spawn_app;
 use actix_web::{HttpResponse,web};
-use reqwest::Url;
 use wiremock::{matchers::{method, path}, Mock, ResponseTemplate};
 
 #[derive(serde::Deserialize)]

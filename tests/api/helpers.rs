@@ -5,7 +5,7 @@ use reqwest::Url;
 use sqlx::{Connection, PgConnection, PgPool,Executor};
 use uuid::Uuid;
 use wiremock::{MockServer, Request};
-use zero2production::{configuration::{get_configuration, DatabaseSetting}, email_client::{self, EmailClient}, health_check, routes::subscribe, startup::get_connection_pool, telemetry::{get_subscriber, init_subscriber}};
+use zero2production::{configuration::{get_configuration, DatabaseSetting}, startup::get_connection_pool, telemetry::{get_subscriber, init_subscriber}};
 use zero2production::startup::Application;
 
 
@@ -36,6 +36,16 @@ impl TestApp {
             .send()
             .await
             .expect("Failed to execute")
+    }
+
+    pub async fn post_newsletter(&self,body:serde_json::Value) -> reqwest::Response {
+        let response = reqwest::Client::new()
+            .post(format!("{}/newsletter",&self.address))
+            .json(&body)
+            .send()
+            .await
+            .expect("Failed to execute to newsletter");
+        response
     }
 
     pub fn get_confirmations_link(

@@ -3,7 +3,7 @@ use std::{io::Error, net::TcpListener};
 use actix_web::{dev::Server, web, App, HttpServer};
 use sqlx::{postgres::PgPoolOptions, PgPool};
 
-use crate::{configuration::{DatabaseSetting, Setting}, email_client::EmailClient, health_check, routes::subscribe,routes::confirm};
+use crate::{configuration::{DatabaseSetting, Setting}, email_client::EmailClient, health_check, routes::subscribe,routes::confirm,routes::publish_newsletter};
 
 pub struct Application {
     pub server:Server,
@@ -71,6 +71,7 @@ pub fn run(listener:TcpListener,
             .route("/health_check", web::get().to(health_check))
             .route("/subscriptions", web::post().to(subscribe))
             .route("/subscriptions/confirm", web::get().to(confirm))
+            .route("/newsletter", web::post().to(publish_newsletter))
             .app_data(data.clone())
             .app_data(email_client.clone())
             .app_data(base_url.clone())
