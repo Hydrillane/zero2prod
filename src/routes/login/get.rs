@@ -1,6 +1,6 @@
 
-use actix_web::{cookie::Cookie, error, http::header::ContentType, web, HttpRequest, HttpResponse};
-use actix_web_flash_messages::{FlashMessage, IncomingFlashMessages, Level};
+use actix_web::{cookie::Cookie, http::header::ContentType,HttpResponse};
+use actix_web_flash_messages::IncomingFlashMessages;
 use hmac::Mac;
 use secrecy::ExposeSecret;
 use serde::Deserialize;
