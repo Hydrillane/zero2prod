@@ -1,13 +1,14 @@
 
+redis_uri: "valkey://127.0.0.1:6379"
 application:
   port: 8001
+  hmac_secret: "cocomelon-wannabe-asodo-12312o3012830128301982301928309182391820381039812"
 database:
   host: "localhost"
   port: 5432
   username: "postgres"
   password: "password"
   database_name: "newsletter"
-
 email_client:
   base_url: "https://api.postmarkapp.com"
   sender_email: "b1032201027@student.untan.ac.id"

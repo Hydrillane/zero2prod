@@ -7,6 +7,12 @@ use validator::ValidateEmail;
 #[derive(Debug,Clone)]
 pub struct SubscriberEmail(pub String);
 
+impl fmt::Display for SubscriberEmail {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.0.fmt(f)
+    }
+} 
+
 impl SubscriberEmail {
     pub fn parse(s:String) -> Result<SubscriberEmail,String> {
         let email = Self(s.clone());
@@ -19,11 +25,6 @@ impl SubscriberEmail {
 
 }
 
-impl fmt::Display for SubscriberEmail {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f,"{}",&self.0)
-    }
-}
 
 
 impl ValidateEmail for SubscriberEmail {

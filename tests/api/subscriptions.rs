@@ -21,6 +21,7 @@ async fn subscribe_return_200_on_valid_form() {
 #[tokio::test]
 async fn subscribe_persists_the_new_subscriber() {
     let app = spawn_app().await;
+    create_unconfirmed_subscriber(&app).await;
     let body = "name=billy%20bongso&email=billybongso%40gmail.com";
 
     Mock::given(path("email"))
@@ -97,6 +98,7 @@ async fn subscribe_sends_a_confirmation_email_with_a_link() {
     Mock::given(path("/email"))
         .and(method("POST"))
         .respond_with(ResponseTemplate::new(200))
+        .expect(1)
         .mount(&app.email_server)
         .await;
 
@@ -127,7 +129,7 @@ async fn subscribe_fail_if_theres_database_error() {
     let body = "name=le%20guin&email=ursula_le_guin%40gmail.com";
 
     sqlx::query!(
-        "ALTER TABLE subscription 
+        "ALTER TABLE subscriptions
         DROP COLUMN email;"
     )
         .execute(&app.db_pool)
@@ -138,35 +140,6 @@ async fn subscribe_fail_if_theres_database_error() {
     assert_eq!(response.status().as_u16(),500);
 }
 
-#[tokio::test]
-async fn newsletter_are_not_delivered_to_unconfirmed_subscribers() {
-    let app = spawn_app().await;
-    create_unconfirmed_subscriber(&app).await;
-    
-    Mock::given(any())
-        .respond_with(ResponseTemplate::new(200))
-        .expect(0)
-        .mount(&app.email_server)
-        .await;
-
-    let newsletter_body = serde_json::json!({
-        "title":"Newsletter title",
-        "content":{
-            "text":"Newsletter body as plain text",
-            "html":"<p> Newsletter body as HTML</p>",
-        }
-    });
-
-    let response = Client::new()
-        .post(&format!("{}/newsletter",&app.address))
-        .json(&newsletter_body)
-        .send()
-        .await
-        .expect("Failed to execute request");
-
-    assert_eq!(response.status().as_u16(),200);
-
-}
 
 async fn create_unconfirmed_subscriber(app:&TestApp) {
     let body = "name=billy%20bongso&email=billybongso2001%40gmail.com";

@@ -3,8 +3,6 @@ use fake::{faker::{internet::ar_sa::SafeEmail, lorem::{ar_sa::Sentence, zh_cn::P
 use reqwest::Client;
 use secrecy::{ExposeSecret, SecretBox, SecretString};
 use serde::Serialize;
-use wiremock::MockServer;
-
 use crate::domain::SubscriberEmail;
 
 pub struct EmailClient {
@@ -34,12 +32,11 @@ impl EmailClient {
 
     pub async fn send_email(
         &self,
-        receipent: SubscriberEmail,
+        receipent: &SubscriberEmail,
         subject: &str,
         html_content:&str,
         text_content:&str
     ) -> Result<(),reqwest::Error> {
-
         let url = format!("{}/email",self.base_url);
         let request_body = SendEmailRequest {
             from: self.sender.as_ref(),
@@ -49,7 +46,7 @@ impl EmailClient {
             text_body:text_content,
         };
 
-        let builder = self
+        self
             .http_client
             .post(&url)
             .header("X-Postmark-Server-Token", 
@@ -129,7 +126,7 @@ mod tests {
 
 
         let _ = email_client(mock_server.uri())
-            .send_email(email(),
+            .send_email(&email(),
             &subject(),
             &content(),
             &content()
@@ -149,9 +146,10 @@ mod tests {
             .mount(&mock_server)
             .await;
 
+
         let outcome = email_client(mock_server.uri())
             .send_email(
-                email(),
+                &email(),
                 &subject(),
                 &content(),
                 &content()

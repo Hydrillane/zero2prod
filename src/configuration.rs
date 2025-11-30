@@ -7,15 +7,17 @@ use serde_aux::prelude::*;
 use secrecy::{ExposeSecret, SecretString};
 use sqlx::{postgres::{PgConnectOptions,PgSslMode},ConnectOptions};
 
-use crate::domain::SubscriberEmail;
+use crate::{domain::SubscriberEmail, email_client::EmailClient, startup::HmacSecret};
 
 #[derive(Deserialize,Clone)]
 pub struct Setting {
     pub database: DatabaseSetting,
     pub application: ApplicationSettings,
     pub email_client: EmailClientSettings,
+    pub redis_uri: SecretString,
    
 }
+
 
 #[derive(Deserialize,Clone)]
 pub struct EmailClientSettings {
@@ -26,6 +28,13 @@ pub struct EmailClientSettings {
 }
 
 impl EmailClientSettings {
+    pub fn client(&self) -> EmailClient {
+        let sender_email = self.sender().expect("Invalid sender email address");
+        let timeout = self.timeout();
+        let base_url = self.base_url.clone();
+        let token = self.authorization_token.clone();
+        EmailClient::new(base_url, sender_email, token, timeout)
+    }
     pub fn sender(&self) -> Result<SubscriberEmail,String> {
         SubscriberEmail::parse(self.sender_email.clone())
     }
@@ -41,6 +50,7 @@ pub struct ApplicationSettings {
     pub host:String,
     pub port:u16,
     pub base_url: String,
+    pub hmac_secret : HmacSecret,
 }
 
 #[derive(Deserialize,Debug,Clone)]
